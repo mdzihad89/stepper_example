@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:stepper_example/app/controllers/step_controller.dart';
 import 'package:stepper_example/app/ui/screens/summary_screen.dart';
+import 'package:stepper_example/app/ui/screens/welcome_screen.dart';
 import 'package:stepper_example/app/ui/widgets/step_widget.dart';
 
 class MainScreen extends StatelessWidget {
@@ -46,16 +47,21 @@ class MainScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     // Back Button
-                    if (controller.currentStepIndex.value > 0)
-                      TextButton.icon(
-                        onPressed: controller.isLoading.value || controller.isSubmittingAll.value
-                            ? null
-                            : () => controller.goToPreviousStep(),
-                        icon: const Icon(Icons.arrow_back),
-                        label: const Text('Back'),
-                      )
-                    else
-                      const SizedBox(), // Placeholder
+                    TextButton.icon(
+                      onPressed: controller.isLoading.value || controller.isSubmittingAll.value
+                          ? null
+                          : () {
+                              if (controller.currentStepIndex.value == 0) {
+                                // On the first step, go back to WelcomeScreen
+                                Get.offAll(() => const WelcomeScreen());
+                              } else {
+                                // Otherwise, go to the previous step
+                                controller.goToPreviousStep();
+                              }
+                            },
+                      icon: const Icon(Icons.arrow_back),
+                      label: const Text('Back'),
+                    ),
 
                     // Next/Finish Button
                     if (controller.currentStepIndex.value < controller.steps.length - 1)
